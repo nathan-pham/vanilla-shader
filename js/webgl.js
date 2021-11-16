@@ -2,7 +2,7 @@ const error = (message) => {
     console.log(`[webgl.js] ${message}`)
 }
 
-export const webgl = ({ container=document.body, vertexSource, fragmentSource }) => {
+const webgl = ({ container=document.body, vertexSource="", fragmentSource="" }) => {
 
     let buffer
 
@@ -14,8 +14,10 @@ export const webgl = ({ container=document.body, vertexSource, fragmentSource })
     const gl = canvas.getContext("webgl")
 
     if(!gl) {
+
         error("failed to get WebGL context")
         return null
+    
     }
 
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
@@ -28,7 +30,7 @@ export const webgl = ({ container=document.body, vertexSource, fragmentSource })
     gl.compileShader(vertexShader)
 
     const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
-    gl.shaderSource(fragmentShader, source)
+    gl.shaderSource(fragmentShader, fragmentSource)
     gl.compileShader(fragmentShader)
 
     const program = gl.createProgram()
@@ -51,9 +53,11 @@ export const webgl = ({ container=document.body, vertexSource, fragmentSource })
     }
 
     if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        error(`shader program could not link\n${gl.getProgramInfoLog(program)}`)
+
+        error(`shader program could not link; ${gl.getProgramInfoLog(program)}`)
         dispose()
         return null
+    
     }
 
     gl.enableVertexAttribArray(0)
@@ -67,3 +71,5 @@ export const webgl = ({ container=document.body, vertexSource, fragmentSource })
     dispose()
     
 }
+
+export default webgl
